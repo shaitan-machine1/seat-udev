@@ -1,0 +1,18 @@
+[workspace]
+resolver = "2"
+members = ["crates/seat-udev", "crates/seatctl"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+rust-version = "1.85"
+
+[workspace.dependencies]
+clap = { version = "4.5", features = ["derive"] }
+libc = "0.2"
+nix = { version = "0.31", features = ["poll"] }
+serde = { version = "1", features = ["derive"] }
+thiserror = "2"
+udev = "0.9.3"
+uuid = { version = "1", features = ["v4"] }
