@@ -38,3 +38,22 @@ writes the rule atomically under `/etc/udev/rules.d`, reloads udevd, opens a
 monitor, writes one correlated `change <uuid>` synthetic event to the complete
 device group, and waits for every matching `SYNTH_UUID`. It deliberately does
 not use global `udevadm settle`.
+
+## Udev rules
+
+`dist/udev/71-seat.rules` and `dist/udev/73-seat-late.rules` must be installed
+into `/usr/lib/udev/rules.d`. They are this stack's replacements for the files
+systemd and elogind ship, and they are what creates the whole seat model:
+
+- `seat` marks a device as a seat member and `master-of-seat` marks the
+  devices that make a seat usable at all;
+- `ID_FOR_SEAT` is the stable name `seatctl` writes assignments against;
+- `ID_SEAT` is the resolved seat, inherited from the nearest assigned
+  ancestor, with no property meaning `seat0`.
+
+Without them nothing is tagged, every consumer sees an empty device set, and
+`multiseatd` publishes no seat at all. Unlike systemd's `73-seat-late.rules`,
+ours never runs udev's `uaccess` builtin: `aclad` owns device ACLs.
+
+After installing or changing the files, `udevadm control --reload` followed by
+a `udevadm trigger` (or a reboot) is needed for devices that already exist.
