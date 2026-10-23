@@ -5,9 +5,11 @@ stack. This repository contains:
 
 - `seat-udev`: a Rust library with a libudev-free semantic API, a
   monitor-before-enumerate cache, pure transition model, and optional
-  assignment support;
-- `seatctl`: the root CLI for inspecting seats and atomically adding/removing
-  `72-seat-<ID_FOR_SEAT>.rules` assignments.
+  assignment support.
+
+The separate unified `loginctl` client compiles this library directly for seat
+inspection and atomic `72-seat-<ID_FOR_SEAT>.rules` assignment. This repository
+intentionally ships no component-specific CLI.
 
 `multiseatd` consumes brokerable DRM/evdev/hidraw devices. `aclad` consumes
 `uaccess` devices. Both pin this repository by an exact git tag.
@@ -24,16 +26,9 @@ Tests use the pure model and a fake assignment backend. The small live test
 opens the local libudev database and queries `/dev/null`; it needs no root or
 graphical hardware.
 
-## seatctl
+## Assignment
 
-```sh
-seatctl status
-sudo seatctl add /dev/dri/card1 seat1
-sudo seatctl remove /dev/dri/card1
-sudo seatctl flush
-```
-
-Assignment resolves the nearest `seat`-tagged ancestor with `ID_FOR_SEAT`,
+Assignment through the library resolves the nearest `seat`-tagged ancestor with `ID_FOR_SEAT`,
 writes the rule atomically under `/etc/udev/rules.d`, reloads udevd, opens a
 monitor, writes one correlated `change <uuid>` synthetic event to the complete
 device group, and waits for every matching `SYNTH_UUID`. It deliberately does
@@ -47,7 +42,7 @@ systemd and elogind ship, and they are what creates the whole seat model:
 
 - `seat` marks a device as a seat member and `master-of-seat` marks the
   devices that make a seat usable at all;
-- `ID_FOR_SEAT` is the stable name `seatctl` writes assignments against;
+- `ID_FOR_SEAT` is the stable name the assignment API writes rules against;
 - `ID_SEAT` is the resolved seat, inherited from the nearest assigned
   ancestor, with no property meaning `seat0`.
 

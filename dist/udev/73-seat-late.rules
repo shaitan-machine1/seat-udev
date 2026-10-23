@@ -1,5 +1,5 @@
 # Seat resolution for the decoupled login stack; runs after the persistent
-# assignments written by seatctl as 72-seat-<ID_FOR_SEAT>.rules.
+# assignments written by loginctl as 72-seat-<ID_FOR_SEAT>.rules.
 #
 # Unlike systemd's file of the same name this does not run the "uaccess"
 # builtin: aclad owns device ACLs and applies them from session state.

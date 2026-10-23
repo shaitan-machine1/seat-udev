@@ -49,7 +49,7 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="2230", ATTR{idProduct}=="000[13]", ENV{ID_AUT
 SUBSYSTEM=="pci", ATTR{vendor}=="0x1b36", ATTR{device}=="0x000a", TAG+="seat", ENV{ID_AUTOSEAT}="1"
 
 # A stable name for the device a seat assignment is written against.
-# seatctl writes rules matching ID_FOR_SEAT, so it must be set before
+# loginctl writes rules matching ID_FOR_SEAT, so it must be set before
 # 72-seat-*.rules runs.
 TAG=="seat", ENV{ID_PATH}=="", IMPORT{builtin}="path_id"
 TAG=="seat", ENV{ID_FOR_SEAT}=="", ENV{ID_PATH_TAG}!="", ENV{ID_FOR_SEAT}="$env{SUBSYSTEM}-$env{ID_PATH_TAG}"
